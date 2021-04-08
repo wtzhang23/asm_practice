@@ -4,7 +4,7 @@
 
 static int dummy_values[] = {5, 4, 3, 2, 1, 0};
 static int dummy_len = 6;
-static const int N_CALLEE_REGISTERS = -1; // need to modify this!
+static const int N_CALLEE_REGISTERS = 6; // need to modify this!
 static const int STACK_SIZE = 1 << 8;
 
 int main(int argc, const char** argv) {
