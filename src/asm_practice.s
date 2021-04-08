@@ -40,6 +40,7 @@ print_str:
 
     # why don't we have to save caller-saved registers here?
 
+    movq $0, %rax # rax is used to denote the number of vector arguments in printf
     jmp printf # Why does this work? Why do we not have to call print_begin and instead just jump straight to it?
     # callq printf
 
@@ -54,8 +55,7 @@ print_str:
     .global print_new_line
 print_new_line:
     leaq new_line(%rip), %rdi
-    callq printf
-    retq
+    jmp print_str
 
 # -----------------------------------------sample assembly 1--------------------------------------------------------
 #  `void print_begin()`, prints a begin message to standard output
@@ -64,9 +64,12 @@ print_new_line:
 # ------------------------------------------------------------------------------------------------------------------
     .global print_begin
 print_begin:
+    pushq %rbp
+    movq %rsp, %rbp # set up stack frame to ensure it is 16 byte aligned
     leaq begin_msg(%rip), %rdi
     callq print_str
     callq print_new_line
+    popq %rbp
     retq
 
 # -----------------------------------------sample assembly 2--------------------------------------------------------
@@ -76,13 +79,19 @@ print_begin:
 # ------------------------------------------------------------------------------------------------------------------
     .global print_arr
 print_arr:
+    pushq %rbp
+    movq %rsp, %rbp
     movq $0, %rax
+    subq $0x20, %rsp # set up space to store variables on the stack
+                     # needs to be 16 byte aligned
 1:
     cmp %rax, %rdi
     je 2f
-    pushq %rdi
-    pushq %rsi
-    pushq %rax
+
+    # save variables on the stack
+    movq %rdi, (%rsp)
+    movq %rsi, 0x8(%rsp) 
+    movq %rax, 0x10(%rsp)
     
     movq %rax, %rdi
     callq get
@@ -93,12 +102,14 @@ print_arr:
     leaq space(%rip), %rdi
     callq print_str
     
-    popq %rax
-    popq %rsi
-    popq %rdi
+    movq 0x10(%rsp), %rax
+    movq 0x8(%rsp), %rsi
+    movq (%rsp), %rdi
     addq $1, %rax
     jmp 1b
 2:
+    addq $0x20, %rsp # deallocate variables on the stack 
+    popq %rbp
     retq
 
 # -----------------------------------------sample assembly 3--------------------------------------------------------

@@ -40,6 +40,7 @@ print_str:
 
     # why don't we have to save caller-saved registers here?
 
+    movq $0, %rax # rax is used to denote the number of vector arguments in printf
     jmp printf # Why does this work? Why do we not have to call print_begin and instead just jump straight to it?
     # callq printf
 
@@ -54,8 +55,7 @@ print_str:
     .global print_new_line
 print_new_line:
     leaq new_line(%rip), %rdi
-    callq printf
-    retq
+    jmp print_str
 
 # -----------------------------------------sample assembly 1--------------------------------------------------------
 #  `void print_begin()`, prints a begin message to standard output
@@ -64,9 +64,12 @@ print_new_line:
 # ------------------------------------------------------------------------------------------------------------------
     .global print_begin
 print_begin:
+    pushq %rbp
+    movq %rsp, %rbp # set up stack frame to ensure it is 16 byte aligned
     leaq begin_msg(%rip), %rdi
     callq print_str
     callq print_new_line
+    popq %rbp
     retq
 
 # -----------------------------------------sample assembly 2--------------------------------------------------------
@@ -76,13 +79,19 @@ print_begin:
 # ------------------------------------------------------------------------------------------------------------------
     .global print_arr
 print_arr:
+    pushq %rbp
+    movq %rsp, %rbp
     movq $0, %rax
+    subq $0x20, %rsp # set up space to store variables on the stack
+                     # needs to be 16 byte aligned
 1:
     cmp %rax, %rdi
     je 2f
-    pushq %rdi
-    pushq %rsi
-    pushq %rax
+
+    # save variables on the stack
+    movq %rdi, (%rsp)
+    movq %rsi, 0x8(%rsp) 
+    movq %rax, 0x10(%rsp)
     
     movq %rax, %rdi
     callq get
@@ -93,12 +102,14 @@ print_arr:
     leaq space(%rip), %rdi
     callq print_str
     
-    popq %rax
-    popq %rsi
-    popq %rdi
+    movq 0x10(%rsp), %rax
+    movq 0x8(%rsp), %rsi
+    movq (%rsp), %rdi
     addq $1, %rax
     jmp 1b
 2:
+    addq $0x20, %rsp # deallocate variables on the stack 
+    popq %rbp
     retq
 
 # -----------------------------------------sample assembly 3--------------------------------------------------------
@@ -173,7 +184,7 @@ cond_swap:
     cmp %rdx, %rcx
     jle 1f
     movq $1, %rax
-    callq swap
+    jmp swap
 1:
     retq
 
@@ -192,6 +203,9 @@ cond_swap:
 # -------------------------------------------------------------------------------------------------------------------
 .global bubble_up
 bubble_up:
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $0x20, %rsp
     movq $0, %rax
     movl %edi, %ecx
     movq %rsi, %rdx
@@ -201,16 +215,18 @@ bubble_up:
     je 2f
     lea (%rdx, %rax, 4),%rdi
     lea 4(%rdx, %rax, 4),%rsi
-    pushq %rax
-    pushq %rcx
-    pushq %rdx
+    movq %rax, (%rsp)
+    movq %rcx, 0x8(%rsp)
+    movq %rdx, 0x10(%rsp)
     callq cond_swap
-    popq %rdx
-    popq %rcx
-    popq %rax
+    movq 0x10(%rsp), %rdx
+    movq 0x8(%rsp), %rcx
+    movq (%rsp), %rax
     addq $1, %rax
     jmp 1b
 2:
+    addq $0x20, %rsp
+    popq %rbp
     retq
 
 # -------------------------------------------problem 4---------------------------------------------------------------
@@ -221,6 +237,9 @@ bubble_up:
 # -------------------------------------------------------------------------------------------------------------------
 .global bubble_sort
 bubble_sort:
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $0x10, %rsp
     movl %edi, %ecx
     movq %rsi, %rdx
 1:
@@ -228,14 +247,16 @@ bubble_sort:
     jz 2f
     movq %rcx, %rdi
     movq %rdx, %rsi
-    pushq %rcx
-    pushq %rdx
+    movq %rcx, (%rsp)
+    movq %rdx, 0x8(%rsp)
     callq bubble_up
-    popq %rdx
-    popq %rcx
+    movq 0x8(%rsp), %rdx
+    movq (%rsp), %rcx
     subq $1, %rcx
     jmp 1b
 2:
+    addq $0x10, %rsp
+    popq %rbp
     retq
 
 # -------------------------------------------problem 5---------------------------------------------------------------
@@ -250,30 +271,36 @@ bubble_sort:
 
 .global fib_recursive
 fib_recursive:
+    pushq %rbp
+    movq %rsp, %rbp
     cmp $0, %rdi
     jne 1f
     movq $1, %rax
+    popq %rbp
     retq
 1:
     cmp $1, %rdi
     jne 2f
     movq $1, %rax
+    popq %rbp
     retq
 2:
+    subq $0x10, %rsp
     movl %edi, %ecx
-    pushq %rdi
+    movq %rdi, 0x8(%rsp)
     subq $1, %rcx
     movq %rcx, %rdi
-    pushq %rcx
+    movq %rcx, (%rsp)
     callq fib_recursive
-    popq %rcx
+    movq (%rsp), %rcx
     subq $1, %rcx
     movq %rcx, %rdi
-    pushq %rax
+    movq %rax, (%rsp)
     callq fib_recursive
     addq (%rsp), %rax
     addq $8, %rsp
     popq %rdi
+    popq %rbp
     retq
 
 # -------------------------------------------Additional practice-----------------------------------------------------
