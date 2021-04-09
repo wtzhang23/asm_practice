@@ -131,10 +131,9 @@ context_entry:
 #  Hints: Look at the above implementation of `print_str`
 #  Return Value: None
 # ------------------------------------------------------------------------------------------------------------------
-.global print_int
+    .global print_int
 print_int:
     jmp todo
-
 
 
 # -------------------------------------------problem 1--------------------------------------------------------------
@@ -144,7 +143,7 @@ print_int:
 #         an integer
 #  Return Value: `arr[idx]`
 # ------------------------------------------------------------------------------------------------------------------
-.global get
+    .global get
 get:
     jmp todo
 
@@ -156,7 +155,7 @@ get:
 #  Hints: Make sure that you preserve callee saved registers or use a caller saved register as an intermediate.
 #  Return Value: None
 # -------------------------------------------------------------------------------------------------------------------
-.global swap
+    .global swap
 swap:
     jmp todo
 
@@ -169,9 +168,10 @@ swap:
 #         points. Like problem 1, be careful with register sizes.
 #  Return Value: Whether the swap occurred
 # -------------------------------------------------------------------------------------------------------------------
-.global cond_swap
+    .global cond_swap
 cond_swap:
     jmp todo
+
 
 # -------------------------------------------problem 3---------------------------------------------------------------
 #  Implement `void bubble_up(int count, int* start)`, which should implement the inner for loop in bubble sort:
@@ -186,9 +186,10 @@ cond_swap:
 #  Hints: Reuse code you have written in problem 2.
 #  Return Value: None
 # -------------------------------------------------------------------------------------------------------------------
-.global bubble_up
+    .global bubble_up
 bubble_up:
     jmp todo
+
 
 # -------------------------------------------problem 4---------------------------------------------------------------
 #  Implement `void bubble_sort(int size, int* arr)`, which should implement bubble sort.
@@ -196,9 +197,10 @@ bubble_up:
 #  Hints: Reuse code you have written in problem 3.
 #  Return Value: None
 # -------------------------------------------------------------------------------------------------------------------
-.global bubble_sort
+    .global bubble_sort
 bubble_sort:
     jmp todo
+
 
 # -------------------------------------------problem 5---------------------------------------------------------------
 #  Implement `int fib_recursive(int n)`, which should implement the nth fibonacci sequence:
@@ -209,12 +211,23 @@ bubble_sort:
 #  Hints: Keep track of caller and callee-saved registers
 #  Return Value: the nth fibonacci number
 # -------------------------------------------------------------------------------------------------------------------
-
-.global fib_recursive
+    .global fib_recursive
 fib_recursive:
     jmp todo
 
-# -------------------------------------------Additional practice-----------------------------------------------------
+
+# -------------------------------------------problem 6---------------------------------------------------------------
+#  Implement `int tree_sum(nptr_t node)`, which should print the sum of all nodes in the tree rooted at this node
+#
+#  Hints: See the header file for the definition of `node_t` and `nptr_t`. Remember to account for struct padding.
+#  Return Value: the sum
+# -------------------------------------------------------------------------------------------------------------------
+    .global tree_sum
+tree_sum:
+    jmp todo
+
+
+# -------------------------------------------additional practice-----------------------------------------------------
 #  Implement `void* context_switch(void* new_rsp)`, which should implement the following routine:
 #  ```
 #  void* context_switch(void* new_rsp) {

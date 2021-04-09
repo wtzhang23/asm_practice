@@ -131,12 +131,11 @@ context_entry:
 #  Hints: Look at the above implementation of `print_str`
 #  Return Value: None
 # ------------------------------------------------------------------------------------------------------------------
-.global print_int
+    .global print_int
 print_int:
     movq %rdi, %rsi
     leaq int_format(%rip), %rdi
     jmp printf
-
 
 
 # -------------------------------------------problem 1--------------------------------------------------------------
@@ -146,7 +145,7 @@ print_int:
 #         an integer
 #  Return Value: `arr[idx]`
 # ------------------------------------------------------------------------------------------------------------------
-.global get
+    .global get
 get:
     movl (%rsi, %rdi, 4), %eax
     retq
@@ -159,7 +158,7 @@ get:
 #  Hints: Make sure that you preserve callee saved registers or use a caller saved register as an intermediate.
 #  Return Value: None
 # -------------------------------------------------------------------------------------------------------------------
-.global swap
+    .global swap
 swap:
     movl (%rdi), %eax
     movl (%rsi), %edx
@@ -176,7 +175,7 @@ swap:
 #         points. Like problem 1, be careful with register sizes.
 #  Return Value: Whether the swap occurred
 # -------------------------------------------------------------------------------------------------------------------
-.global cond_swap
+    .global cond_swap
 cond_swap:
     movq $0, %rax
     movl (%rdi), %ecx
@@ -187,6 +186,7 @@ cond_swap:
     jmp swap
 1:
     retq
+
 
 # -------------------------------------------problem 3---------------------------------------------------------------
 #  Implement `void bubble_up(int count, int* start)`, which should implement the inner for loop in bubble sort:
@@ -201,7 +201,7 @@ cond_swap:
 #  Hints: Reuse code you have written in problem 2.
 #  Return Value: None
 # -------------------------------------------------------------------------------------------------------------------
-.global bubble_up
+    .global bubble_up
 bubble_up:
     pushq %rbp
     movq %rsp, %rbp
@@ -229,13 +229,14 @@ bubble_up:
     popq %rbp
     retq
 
+
 # -------------------------------------------problem 4---------------------------------------------------------------
 #  Implement `void bubble_sort(int size, int* arr)`, which should implement bubble sort.
 #
 #  Hints: Reuse code you have written in problem 3.
 #  Return Value: None
 # -------------------------------------------------------------------------------------------------------------------
-.global bubble_sort
+    .global bubble_sort
 bubble_sort:
     pushq %rbp
     movq %rsp, %rbp
@@ -259,6 +260,7 @@ bubble_sort:
     popq %rbp
     retq
 
+
 # -------------------------------------------problem 5---------------------------------------------------------------
 #  Implement `int fib_recursive(int n)`, which should implement the nth fibonacci sequence:
 #       fib(0) = 1
@@ -268,8 +270,7 @@ bubble_sort:
 #  Hints: Keep track of caller and callee-saved registers
 #  Return Value: the nth fibonacci number
 # -------------------------------------------------------------------------------------------------------------------
-
-.global fib_recursive
+    .global fib_recursive
 fib_recursive:
     pushq %rbp
     movq %rsp, %rbp
@@ -303,7 +304,38 @@ fib_recursive:
     popq %rbp
     retq
 
-# -------------------------------------------Additional practice-----------------------------------------------------
+
+# -------------------------------------------problem 6---------------------------------------------------------------
+#  Implement `int tree_sum(nptr_t node)`, which should print the sum of all nodes in the tree rooted at this node
+#
+#  Hints: See the header file for the definition of `node_t` and `nptr_t`. Remember to account for struct padding.
+#  Return Value: the sum
+# -------------------------------------------------------------------------------------------------------------------
+    .global tree_sum
+tree_sum:
+    pushq %rbp
+    movq %rsp, %rbp 
+    movq $0, %rax
+    cmp $0, %rdi
+    je 1f
+    subq $0x10, %rsp
+    movl (%rdi), %eax
+    movq %rdi, (%rsp)
+    movq %rax, 0x8(%rsp)
+    movq 0x8(%rdi), %rdi
+    callq tree_sum
+    addl %eax, 0x8(%rsp)
+    movq (%rsp), %rdi
+    movq 0x10(%rdi), %rdi
+    callq tree_sum
+    addl 0x8(%rsp), %eax
+    addq $0x10, %rsp
+1:
+    popq %rbp
+    retq
+
+
+# -------------------------------------------additional practice-----------------------------------------------------
 #  Implement `void* context_switch(void* new_rsp)`, which should implement the following routine:
 #  ```
 #  void* context_switch(void* new_rsp) {

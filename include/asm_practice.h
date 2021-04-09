@@ -18,4 +18,13 @@ extern int fib_recursive(int n);
 extern void* context_switch(void* new_rsp);
 void context_entry();
 void middle_of_nowhere(void* old_rsp);
+
+typedef struct node {
+    int val;
+    struct node* left;
+    struct node* right;
+} node_t, *nptr_t;
+
+extern int tree_sum(nptr_t node);
+
 #endif
