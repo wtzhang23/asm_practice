@@ -3,7 +3,7 @@
             # Exception: Static and global variables initialized to zero are typically stored in the "BSS segment"
             #            as a small optimization when loading programs into memory
 str_format:
-    .asciz "%s" # defines a string with "%d\n" as its value
+    .asciz "%s" # defines a string with "%s" as its value
 
 int_format:
     .asciz "%d" 
