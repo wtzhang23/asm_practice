@@ -57,7 +57,7 @@ print_new_line:
     leaq new_line(%rip), %rdi
     jmp print_str
 
-# -----------------------------------------sample assembly 1--------------------------------------------------------
+# -----------------------------------------sample assembly 2--------------------------------------------------------
 #  `void print_begin()`, prints a begin message to standard output
 #  
 #  Return Value: None
@@ -72,7 +72,7 @@ print_begin:
     popq %rbp
     retq
 
-# -----------------------------------------sample assembly 2--------------------------------------------------------
+# -----------------------------------------sample assembly 3--------------------------------------------------------
 #  `void print_arr(int n_elems, const int* arr)`, prints an array of integers to standard output
 #  
 #  Return Value: None
@@ -112,7 +112,7 @@ print_arr:
     popq %rbp
     retq
 
-# -----------------------------------------sample assembly 3--------------------------------------------------------
+# -----------------------------------------sample assembly 4--------------------------------------------------------
 #  `void context_entry()`, jumps to `middle_of_nowhere`
 #  
 #  Return Value: None
