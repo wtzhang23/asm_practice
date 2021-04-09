@@ -41,8 +41,8 @@ print_str:
     # why don't we have to save caller-saved registers here?
 
     movq $0, %rax # rax is used to denote the number of vector arguments in printf
-    jmp printf # Why does this work? Why do we not have to call print_begin and instead just jump straight to it?
-    # callq printf
+    jmp printf@plt # Why does this work? Why do we not have to call print_begin and instead just jump straight to it?
+    # callq printf@plt
 
     # why don't we have to restore caller-saved registers here?
     # retq
@@ -57,7 +57,7 @@ print_new_line:
     leaq new_line(%rip), %rdi
     jmp print_str
 
-# -----------------------------------------sample assembly 1--------------------------------------------------------
+# -----------------------------------------sample assembly 2--------------------------------------------------------
 #  `void print_begin()`, prints a begin message to standard output
 #  
 #  Return Value: None
@@ -72,7 +72,7 @@ print_begin:
     popq %rbp
     retq
 
-# -----------------------------------------sample assembly 2--------------------------------------------------------
+# -----------------------------------------sample assembly 3--------------------------------------------------------
 #  `void print_arr(int n_elems, const int* arr)`, prints an array of integers to standard output
 #  
 #  Return Value: None
@@ -112,7 +112,7 @@ print_arr:
     popq %rbp
     retq
 
-# -----------------------------------------sample assembly 3--------------------------------------------------------
+# -----------------------------------------sample assembly 4--------------------------------------------------------
 #  `void context_entry()`, jumps to `middle_of_nowhere`
 #  
 #  Return Value: None
@@ -135,7 +135,7 @@ context_entry:
 print_int:
     movq %rdi, %rsi
     leaq int_format(%rip), %rdi
-    jmp printf
+    jmp printf@plt
 
 
 # -------------------------------------------problem 1--------------------------------------------------------------

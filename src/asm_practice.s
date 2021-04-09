@@ -41,8 +41,8 @@ print_str:
     # why don't we have to save caller-saved registers here?
 
     movq $0, %rax # rax is used to denote the number of vector arguments in printf
-    jmp printf # Why does this work? Why do we not have to call print_begin and instead just jump straight to it?
-    # callq printf
+    jmp printf@plt # Why does this work? Why do we not have to call print_begin and instead just jump straight to it?
+    # callq printf@plt
 
     # why don't we have to restore caller-saved registers here?
     # retq
